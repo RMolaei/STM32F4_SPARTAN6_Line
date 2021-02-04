@@ -53,7 +53,7 @@ module top (
    assign SPI_SLAVE_din_vld = ~rst;
    always @(posedge clock)
       if(rst)
-         SPI_SLAVE_din <= 8'd(-1);
+         SPI_SLAVE_din <= -1;
       else if (SPI_SLAVE_dout_vld)
          SPI_SLAVE_din <= SPI_SLAVE_dout;
 //###############################################################################################
