@@ -44,7 +44,9 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-
+GPIO_PinState BTN_State = GPIO_PIN_RESET;
+uint16_t readbackError = 0;
+uint8_t counter = 0x00;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -88,7 +90,7 @@ int main(void)
   MX_GPIO_Init();
   MX_SPI1_Init();
   /* USER CODE BEGIN 2 */
-
+  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, GPIO_PIN_SET);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -96,6 +98,28 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
+    BTN_State = HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_0);
+    HAL_Delay(100);
+    if(BTN_State==GPIO_PIN_SET)
+    {
+      uint8_t TxData;
+      uint8_t RxData;
+      while (1)
+      {
+        TxData = counter;
+        HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, GPIO_PIN_RESET);
+        HAL_SPI_TransmitReceive(&hspi1, &TxData, &RxData, 1, 1);
+        HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, GPIO_PIN_SET);
+        if((TxData-1)!=RxData)
+        {
+          ++readbackError;
+          HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_13);
+        }
+        ++counter;
+        HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_12);
+        HAL_Delay(500);
+      }
+    }
 
     /* USER CODE BEGIN 3 */
   }
