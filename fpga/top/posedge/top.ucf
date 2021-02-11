@@ -9,14 +9,14 @@ NET "clock"        LOC = P50;   # 24MHz on-board clock
 #NET "UART_RX"           LOC = p105;
 
 # dip-switches
-#NET "dip_switch[0]" LOC = P51;
-#NET "dip_switch[1]" LOC = P48;
-#NET "dip_switch[2]" LOC = P55;
-#NET "dip_switch[3]" LOC = P56;
-#NET "dip_switch[4]" LOC = P57;
-#NET "dip_switch[5]" LOC = P58;
-#NET "dip_switch[6]" LOC = P66;
-#NET "dip_switch[7]" LOC = P59;
+NET "dip_switch" LOC = P51;#NET "dip_switch[0]" LOC = P51;
+#NET "dip_switch[1]" LOC = P48;#NET "dip_switch[0]" LOC = P51;
+#NET "dip_switch[2]" LOC = P55;#NET "dip_switch[2]" LOC = P55;
+#NET "dip_switch[3]" LOC = P56;#NET "dip_switch[3]" LOC = P56;
+#NET "dip_switch[4]" LOC = P57;#NET "dip_switch[4]" LOC = P57;
+#NET "dip_switch[5]" LOC = P58;#NET "dip_switch[5]" LOC = P58;
+#NET "dip_switch[6]" LOC = P66;#NET "dip_switch[6]" LOC = P66;
+#NET "dip_switch[7]" LOC = P59;#NET "dip_switch[7]" LOC = P59;
 
 # Push-Buttons
 NET "push_button" LOC = P78;#NET "push_button[0]" LOC = P78;

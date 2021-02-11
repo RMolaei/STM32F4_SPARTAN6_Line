@@ -7,6 +7,8 @@
 module top (
    // 24 MHz osc
    input        clock,
+   // dip-switches
+   input        dip_switch,
    // Push-Buttons
    input        push_button,
    // LEDs
@@ -38,7 +40,7 @@ module top (
 //###############################################################################################
 //###                              SPI_SLAVE instantution                                     ###
 //###############################################################################################
-   reg  [7:0] SPI_SLAVE_din;
+   reg  [7:0] SPI_SLAVE_din = 0;
    wire [7:0] SPI_SLAVE_dout;
    wire SPI_SLAVE_din_vld, SPI_SLAVE_ready, SPI_SLAVE_dout_vld;
    SPI_SLAVE SPI_SLAVE (
@@ -56,13 +58,18 @@ module top (
       .DOUT     (SPI_SLAVE_dout),     // output data from SPI master
       .DOUT_VLD (SPI_SLAVE_dout_vld)  // when DOUT_VLD = 1, output data are valid
    );
-   assign leds = SPI_SLAVE_din;
-   assign SPI_SLAVE_din_vld = ~rst;
    always @(posedge clock)
       if(rst)
-         SPI_SLAVE_din <= -1;
+         SPI_SLAVE_din <= 0;
+      else if(SPI_SLAVE_dout_vld)
+         SPI_SLAVE_din <= SPI_SLAVE_din + 1;
+   assign SPI_SLAVE_din_vld = ~rst;
+   reg  [7:0] SPI_SLAVE_dout_reg = 0;
+   always @(posedge clock)
+      if(rst)
+         SPI_SLAVE_dout_reg <= 0;
       else if (SPI_SLAVE_dout_vld)
-         SPI_SLAVE_din <= SPI_SLAVE_dout;
+         SPI_SLAVE_dout_reg <= SPI_SLAVE_dout;
 //###############################################################################################
 //###                              END SPI_SLAVE instantution                                 ###
 //###############################################################################################
@@ -106,7 +113,7 @@ module top (
       else if(push_button==1'b0 && state==1'b0)
          state <= 1'b1;
 
-   reg [24:0] SPI_MASTER_countr = 0;
+   reg [22:0] SPI_MASTER_countr = 0;
    always @(posedge clock)
       if(rst) begin
          SPI_MASTER_din    <= 0;
@@ -118,8 +125,15 @@ module top (
          SPI_MASTER_countr <= SPI_MASTER_countr + 1;
       end
    assign SPI_MASTER_din_vld = ( SPI_MASTER_countr==5 ? 1'b1 : 1'b0 );
+   reg [7:0] SPI_MASTER_dout_reg = 0;
+   always @(posedge clock)
+      if(rst)
+         SPI_MASTER_dout_reg <= 0;
+      else if (SPI_MASTER_dout_vld)
+         SPI_MASTER_dout_reg <= SPI_MASTER_dout;
 //###############################################################################################
 //###                              END SPI_MASTER instantution                                ###
 //###############################################################################################
+   assign leds = dip_switch?SPI_MASTER_dout_reg:SPI_SLAVE_dout_reg;
 
 endmodule // top

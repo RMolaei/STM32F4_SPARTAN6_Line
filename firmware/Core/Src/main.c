@@ -45,10 +45,12 @@
 
 /* USER CODE BEGIN PV */
 GPIO_PinState BTN_State = GPIO_PIN_RESET;
-uint16_t readbackError = 0;
-uint8_t counter = 0x00;
-uint8_t send_hspi2 = 0;
-uint8_t receive_hspi2 = 0;
+uint16_t readbackError_hspi1 = 0;
+uint8_t  send_hspi1          = 0x00;
+uint8_t  receive_hspi1       = 0x00;
+uint16_t readbackError_hspi2 = 0;
+uint8_t  send_hspi2          = 0x00;
+uint8_t  receive_hspi2       = 0x00;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -94,6 +96,7 @@ int main(void)
   MX_SPI2_Init();
   /* USER CODE BEGIN 2 */
   HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, GPIO_PIN_SET);
+  HAL_SPI_TransmitReceive_IT(&hspi2, &send_hspi2, &receive_hspi2, 1);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -101,29 +104,26 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
-    HAL_SPI_TransmitReceive_IT(&hspi2, &send_hspi2, &receive_hspi2, 1);
-    /*BTN_State = HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_0);
+    BTN_State = HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_0);
     HAL_Delay(100);
     if(BTN_State==GPIO_PIN_SET)
     {
-      uint8_t TxData;
-      uint8_t RxData;
+      static uint8_t receive_hspi1_next = 0x00;
       while (1)
       {
-        TxData = counter;
         HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, GPIO_PIN_RESET);
-        HAL_SPI_TransmitReceive(&hspi1, &TxData, &RxData, 1, 1);
+        HAL_SPI_TransmitReceive(&hspi1, &send_hspi1, &receive_hspi1, 1, 1);
         HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, GPIO_PIN_SET);
-        if((TxData-1)!=RxData)
+        if(receive_hspi1 != receive_hspi1_next)
         {
-          ++readbackError;
-          HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_13);
+          ++readbackError_hspi1;
         }
-        ++counter;
+        receive_hspi1_next = receive_hspi1 + 1;
+        ++send_hspi1;
         HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_12);
         HAL_Delay(500);
       }
-    }*/
+    }
 
     /* USER CODE BEGIN 3 */
   }
@@ -141,7 +141,15 @@ void HAL_SPI_TxRxCpltCallback(SPI_HandleTypeDef *hspi)
   /* Prevent unused argument(s) compilation warning */
   UNUSED(hspi);
   //
-  send_hspi2 = receive_hspi2;
+  static uint8_t receive_hspi2_next = 0x00;
+  if(receive_hspi2 != receive_hspi2_next)
+  {
+    ++readbackError_hspi2;
+  }
+  receive_hspi2_next = receive_hspi2 + 1;
+  ++send_hspi2;
+  HAL_SPI_TransmitReceive_IT(&hspi2, &send_hspi2, &receive_hspi2, 1);
+  HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_13);
 }
 
 /**
