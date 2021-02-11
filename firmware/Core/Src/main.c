@@ -47,6 +47,8 @@
 GPIO_PinState BTN_State = GPIO_PIN_RESET;
 uint16_t readbackError = 0;
 uint8_t counter = 0x00;
+uint8_t send_hspi2 = 0;
+uint8_t receive_hspi2 = 0;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -89,6 +91,7 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_SPI1_Init();
+  MX_SPI2_Init();
   /* USER CODE BEGIN 2 */
   HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, GPIO_PIN_SET);
   /* USER CODE END 2 */
@@ -98,7 +101,8 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
-    BTN_State = HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_0);
+    HAL_SPI_TransmitReceive_IT(&hspi2, &send_hspi2, &receive_hspi2, 1);
+    /*BTN_State = HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_0);
     HAL_Delay(100);
     if(BTN_State==GPIO_PIN_SET)
     {
@@ -119,11 +123,25 @@ int main(void)
         HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_12);
         HAL_Delay(500);
       }
-    }
+    }*/
 
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
+}
+
+/**
+  * @brief  Tx and Rx Transfer completed callback.
+  * @param  hspi pointer to a SPI_HandleTypeDef structure that contains
+  *               the configuration information for SPI module.
+  * @retval None
+  */
+void HAL_SPI_TxRxCpltCallback(SPI_HandleTypeDef *hspi)
+{
+  /* Prevent unused argument(s) compilation warning */
+  UNUSED(hspi);
+  //
+  send_hspi2 = receive_hspi2;
 }
 
 /**

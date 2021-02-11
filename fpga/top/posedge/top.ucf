@@ -19,10 +19,10 @@ NET "clock"        LOC = P50;   # 24MHz on-board clock
 #NET "dip_switch[7]" LOC = P59;
 
 # Push-Buttons
-#NET "push_button[0]" LOC = P78;
-#NET "push_button[1]" LOC = P75;
-#NET "push_button[2]" LOC = P67;
-#NET "push_button[3]" LOC = P74;
+NET "push_button" LOC = P78;#NET "push_button[0]" LOC = P78;
+#NET "push_button[1]" LOC = P75;#NET "push_button[1]" LOC = P75;
+#NET "push_button[2]" LOC = P67;#NET "push_button[2]" LOC = P67;
+#NET "push_button[3]" LOC = P74;#NET "push_button[3]" LOC = P74;
 
 # LEDs
 NET "leds[7]"  LOC = P120;
@@ -35,11 +35,11 @@ NET "leds[1]"  LOC = P131;
 NET "leds[0]"  LOC = P132;
 
 # WING 3 (Only for Rev_1.2 of Hardware)
-#NET "W3_8" LOC = P111; #NET "W3_8" LOC = P111;
-#NET "W3_7" LOC = P112; #NET "W3_7" LOC = P112;
-#NET "W3_6" LOC = P114; #NET "W3_6" LOC = P114;
-#NET "W3_5" LOC = P115; #NET "W3_5" LOC = P115;
-NET "miso" LOC = P116; #NET "W3_4" LOC = P116;
-NET "mosi" LOC = P117; #NET "W3_3" LOC = P117;
-NET "cs"   LOC = P118; #NET "W3_2" LOC = P118;
-NET "sclk" LOC = P119; #NET "W3_1" LOC = P119;
+NET "master_miso" LOC = P111; #NET "W3_8" LOC = P111;
+NET "master_mosi" LOC = P112; #NET "W3_7" LOC = P112;
+NET "master_cs"   LOC = P114; #NET "W3_6" LOC = P114;
+NET "master_sclk" LOC = P115; #NET "W3_5" LOC = P115;
+NET "slave_miso" LOC = P116; #NET "W3_4" LOC = P116;
+NET "slave_mosi" LOC = P117; #NET "W3_3" LOC = P117;
+NET "slave_cs"   LOC = P118; #NET "W3_2" LOC = P118;
+NET "slave_sclk" LOC = P119; #NET "W3_1" LOC = P119;

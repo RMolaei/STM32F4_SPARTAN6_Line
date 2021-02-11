@@ -47,7 +47,7 @@ entity SPI_MASTER is
         MOSI     : out std_logic; -- SPI serial data from master to slave
         MISO     : in  std_logic; -- SPI serial data from slave to master
         -- INPUT USER INTERFACE
-        ADDR     : in  std_logic_vector(integer(ceil(log2(real(SLAVE_COUNT))))-1 downto 0); -- SPI slave address
+        ADDR     : in  std_logic_vector(0 downto 0); -- SPI slave address
         DIN      : in  std_logic_vector(7 downto 0); -- input data for SPI slave
         DIN_LAST : in  std_logic; -- when DIN_LAST = 1, after transmit these input data is asserted CS_N
         DIN_VLD  : in  std_logic; -- when DIN_VLD = 1, input data are valid
@@ -64,7 +64,7 @@ architecture RTL of SPI_MASTER is
     constant WIDTH_CLK_CNT      : integer := integer(ceil(log2(real(DIVIDER_VALUE))));
     constant WIDTH_ADDR         : integer := integer(ceil(log2(real(SLAVE_COUNT))));
 
-    signal addr_reg             : std_logic_vector(WIDTH_ADDR-1 downto 0);
+    signal addr_reg             : std_logic_vector(0 downto 0);
     signal sys_clk_cnt          : unsigned(WIDTH_CLK_CNT-1 downto 0);
     signal sys_clk_cnt_max      : std_logic;
     signal sys_clk_cnt_rst      : std_logic;
